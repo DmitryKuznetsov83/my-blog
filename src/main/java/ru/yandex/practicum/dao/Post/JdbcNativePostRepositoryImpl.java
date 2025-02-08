@@ -1,0 +1,139 @@
+package ru.yandex.practicum.dao.Post;
+
+import io.micrometer.common.util.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.model.Post;
+
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public class JdbcNativePostRepositoryImpl implements PostRepository {
+
+    private final JdbcTemplate jdbcTemplate;
+
+    private final RowMapper<Post> postRowMapper = (rs, rowNum) -> new Post(
+            rs.getLong("id"),
+            rs.getString("title"),
+            rs.getString("body"),
+            rs.getString("short_body"),
+            rs.getLong("like_count"),
+            rs.getString("tags")
+    );
+
+    @Autowired
+    public JdbcNativePostRepositoryImpl(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    // POSTS
+    @Override
+    public List<Post> findPostByPage(int page, int size, String filterByTag) {
+        int offset = (page - 1) * size;
+        if (StringUtils.isBlank(filterByTag)) {
+            String sql = """
+                SELECT p.id, p.title, p.body, p.short_body, pc.count as like_count, p.tags
+                        FROM posts p LEFT JOIN posts_like_count pc ON p.id = pc.post_id 
+                        ORDER BY p.id DESC 
+                        LIMIT ? OFFSET ?
+                """;
+            return jdbcTemplate.query(sql, postRowMapper, size, offset);
+        } else {
+            String sql = """
+                SELECT p.id, p.title, p.body, p.short_body, pc.count as like_count, p.tags
+                        FROM posts p LEFT JOIN posts_like_count pc ON p.id = pc.post_id                
+                        WHERE p.id IN 
+                              (SELECT post_id FROM post_tag pt JOIN tags t on pt.tag_id = t.id WHERE t.name = ?)
+                        ORDER BY p.id DESC 
+                        LIMIT ? OFFSET ?
+                """;
+            return jdbcTemplate.query(sql, postRowMapper, filterByTag, size, offset);
+        }
+
+    }
+
+    @Override
+    public Optional<Post> findPostById(Long id) {
+        String sql = """
+                SELECT p.id, p.title, p.body, p.short_body, pc.count as like_count, p.tags
+                FROM posts p LEFT JOIN posts_like_count pc ON p.id = pc.post_id
+                WHERE id = ?
+                """;
+        return jdbcTemplate.query(sql, postRowMapper, id)
+                .stream()
+                .findFirst();
+    }
+
+    @Override
+    public long createPost(Post post) {
+        String sql = "INSERT INTO posts(title, body, short_body, tags) VALUES(?, ?, ?, ?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, post.title());
+            ps.setString(2, post.body());
+            ps.setString(3, post.shortBody());
+            ps.setString(4, post.tags());
+            return ps;
+        }, keyHolder);
+
+        return keyHolder.getKey().longValue();
+    }
+
+    @Override
+    public boolean updatePost(Post post) {
+        String sql = "UPDATE posts SET title = ?, body = ?, short_body = ? , tags = ? WHERE id = ?";
+        int rowsAffected = jdbcTemplate.update(sql, post.title(), post.body(), post.shortBody(), post.tags(), post.id());
+        return rowsAffected != 0;
+    }
+
+    @Override
+    public boolean deletePostById(Long id) {
+        int rowsAffected = jdbcTemplate.update("DELETE FROM posts WHERE id = ?", id);
+        return rowsAffected != 0;
+    }
+
+    @Override
+    public long postsCount(String filterByTag) {
+        if (StringUtils.isBlank(filterByTag)) {
+            String sql = "SELECT COUNT(*) FROM posts";
+            return jdbcTemplate.queryForObject(sql, long.class);
+        } else {
+            String sql = """
+                    SELECT COUNT(*) FROM posts
+                    WHERE id IN
+                            (SELECT post_id FROM post_tag pt JOIN tags t on pt.tag_id = t.id WHERE t.name = ?)
+                    """;
+            return jdbcTemplate.queryForObject(sql, long.class, filterByTag);
+        }
+    }
+
+
+    // LIKES
+    @Override
+    public void createLikeCounter(long postId) {
+        String sql = "INSERT INTO posts_like_count(post_id, count) VALUES(?, 0)";
+        jdbcTemplate.update(sql, postId);
+    }
+
+    @Override
+    public boolean deleteLikeCounter(Long id) {
+        int rowsAffected = jdbcTemplate.update("DELETE FROM posts_like_count WHERE post_id = ?", id);
+        return rowsAffected != 0;
+    }
+
+    @Override
+    public long likePost(long postId) {
+        String sql = "UPDATE posts_like_count SET count = count + 1  WHERE post_id = ?";
+        return jdbcTemplate.update(sql, postId);
+    }
+
+}

@@ -3,8 +3,10 @@ package ru.yandex.practicum.mapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.model.Post;
+import ru.yandex.practicum.view_model.PostCreateDto;
 import ru.yandex.practicum.view_model.PostFullViewDto;
 import ru.yandex.practicum.view_model.PostPreviewDto;
+import ru.yandex.practicum.view_model.PostUpdateDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,20 +24,35 @@ public class PostMapper {
     public PostPreviewDto mapToPostPreviewDto(Post post) {
         return new PostPreviewDto(post.id(),
                 post.title(),
-                post.shortBody());
+                post.shortBody(),
+                post.likeCounter(),
+                post.tags());
     }
 
-    public Post mapToPost(PostFullViewDto postFullViewDto) {
-        return new Post(postFullViewDto.id(),
-                postFullViewDto.title(),
-                postFullViewDto.body(),
-                extractFirstLines(postFullViewDto.body()));
+    public Post mapToPost(PostCreateDto postCreateDto) {
+        return new Post(null,
+                postCreateDto.title(),
+                postCreateDto.body(),
+                extractFirstLines(postCreateDto.body()),
+                0L,
+                postCreateDto.tags());
+    }
+
+    public Post mapToPost(PostUpdateDto postUpdateDto) {
+        return new Post(postUpdateDto.id(),
+                postUpdateDto.title(),
+                postUpdateDto.body(),
+                extractFirstLines(postUpdateDto.body()),
+                0L,
+                postUpdateDto.tags());
     }
 
     public PostFullViewDto mapToPostFullDto(Post post) {
         return new PostFullViewDto(post.id(),
                 post.title(),
-                post.body());
+                post.body(),
+                post.likeCounter(),
+                post.tags());
     }
 
 

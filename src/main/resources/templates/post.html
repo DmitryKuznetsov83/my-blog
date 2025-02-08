@@ -63,7 +63,8 @@
     <button type="submit">Close</button>
 </form>
 
-<form th:if="${post.id == null}" th:action="@{/posts}" method="POST">
+
+<form th:if="${mode == 'newPost'}" th:action="@{/posts}" method="POST">
     <button type="submit">Save</button>
 
     <label for="title">title:</label>
@@ -72,9 +73,19 @@
     <label for="body">body:</label>
     <textarea th:text="${post.body}" id="body" name="body" rows="4" cols="100" placeholder="text..." required="true"></textarea>
 
+    <label for="tags">tags:</label>
+    <textarea th:text="${post.tags}" id="tags" name="tags" rows="1" cols="100" placeholder="tags..."n></textarea>
+
 </form>
 
-<form th:if="${post.id != null}" th:action="@{/posts}" method="POST">
+<span th:if="${mode == 'review/updatePost'}" th:text="'likes: ' + ${post.likeCounter}"></span>
+
+<form th:if="${mode == 'review/updatePost'}" th:action="@{/posts/{id}/like(id=${post.id})}" method="POST">
+    <button type="submit">Like</button>
+</form>
+
+<form th:if="${mode == 'review/updatePost'}" th:action="@{/posts}" method="POST">
+
     <input type="hidden" name="_method" value="update">
     <button type="submit">Update</button>
 
@@ -87,9 +98,12 @@
     <label for="body">body:</label>
     <textarea th:text="${post.body}" id="body" name="body" rows="4" cols="100" placeholder="text..." required="true"></textarea>
 
+    <label for="tags">tags:</label>
+    <textarea th:text="${post.tags}" id="tags" name="tags" rows="1" cols="100" placeholder="tags..."></textarea>
+
 </form>
 
-<form th:if="${post.id != null}" th:action="@{/posts/{id}(id=${post.id})}" method="POST" style="display:inline;">
+<form th:if="${mode == 'review/updatePost'}" th:action="@{/posts/{id}(id=${post.id})}" method="POST" style="display:inline;">
     <input type="hidden" name="_method" value="delete">
     <button type="submit">Delete</button>
 </form>
