@@ -90,7 +90,7 @@ public class TagServiceImpl implements TagService {
     private List<String> extractTagsFormString(String tags) {
         String splitter = " ";
         return Arrays.stream(tags.split(splitter))
-                .map(tag -> tag = tag.trim())
+                .map(String::trim)
                 .distinct()
                 .filter(tag -> !tag.isBlank())
                 .toList();

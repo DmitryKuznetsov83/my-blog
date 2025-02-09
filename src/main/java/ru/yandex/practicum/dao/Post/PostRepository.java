@@ -23,5 +23,5 @@ public interface PostRepository {
 
     boolean deleteLikeCounter(Long id);
 
-    long likePost(long postId);
+    void likePost(long postId);
 }

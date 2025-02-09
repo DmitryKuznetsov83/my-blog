@@ -22,4 +22,6 @@ public interface PostService {
     void likePost(Long id);
 
     List<TagDto> findAllTags();
+
+    Optional<byte[]> findImageByPostId(Long id);
 }

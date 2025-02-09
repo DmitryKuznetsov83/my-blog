@@ -64,17 +64,27 @@
 </form>
 
 
-<form th:if="${mode == 'newPost'}" th:action="@{/posts}" method="POST">
+<form th:if="${mode == 'newPost'}" th:action="@{/posts}" method="POST" enctype="multipart/form-data">
+
     <button type="submit">Save</button>
 
     <label for="title">title:</label>
-    <textarea th:text="${post.title}" id="title" name="title" rows="1" cols="100" placeholder="text..." required="true"></textarea>
+    <textarea th:text="${post.title}" th:value="${post.title}" id="title" name="title" rows="1" cols="100" placeholder="text..." required="true"></textarea>
+
+    <label>Choose picture:</label>
+    <input type="file" name="image" accept="image/*" id="image" onchange="previewImage(event)">
+
+    <button type="button" onclick="clearImage()">Clear Image</button>
+
+    <div id="previewContainer" style="display: none; margin-top: 10px;">
+        <img id="imagePreview" src="#" style="max-width: 200px; display: block;">
+    </div>
 
     <label for="body">body:</label>
     <textarea th:text="${post.body}" id="body" name="body" rows="4" cols="100" placeholder="text..." required="true"></textarea>
 
     <label for="tags">tags:</label>
-    <textarea th:text="${post.tags}" id="tags" name="tags" rows="1" cols="100" placeholder="tags..."n></textarea>
+    <textarea th:text="${post.tags}" id="tags" name="tags" rows="1" cols="100" placeholder="tags..."></textarea>
 
 </form>
 
@@ -84,7 +94,7 @@
     <button type="submit">Like</button>
 </form>
 
-<form th:if="${mode == 'review/updatePost'}" th:action="@{/posts}" method="POST">
+<form th:if="${mode == 'review/updatePost'}" th:action="@{/posts}" method="POST" enctype="multipart/form-data">
 
     <input type="hidden" name="_method" value="update">
     <button type="submit">Update</button>
@@ -94,6 +104,15 @@
 
     <label for="title">title:</label>
     <textarea th:text="${post.title}" id="title" name="title" rows="1" cols="100" placeholder="text..." required="true"></textarea>
+
+    <label>Choose picture:</label>
+    <input type="file" name="image" accept="image/*" id="image" onchange="previewImage(event)">
+
+    <button type="button" onclick="clearImage()">Clear Image</button>
+
+    <div id="previewContainer" style="margin-top: 10px;">
+        <img id="imagePreview" th:src="@{/posts/{id}/image(id=${post.id})}" alt = "image" style="max-width: 200px; display: block;">
+    </div>
 
     <label for="body">body:</label>
     <textarea th:text="${post.body}" id="body" name="body" rows="4" cols="100" placeholder="text..." required="true"></textarea>
@@ -107,6 +126,26 @@
     <input type="hidden" name="_method" value="delete">
     <button type="submit">Delete</button>
 </form>
+
+
+<script>
+    function clearImage() {
+        document.getElementById("image").value = "";
+        document.getElementById("imagePreview").src = "#";
+        document.getElementById("previewContainer").style.display = "none";
+    }
+
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function(){
+            var preview = document.getElementById('imagePreview');
+            preview.src = reader.result;
+            document.getElementById('previewContainer').style.display = 'block';
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>
+
 
 </body>
 </html>

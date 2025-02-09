@@ -9,6 +9,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.model.Post;
 
+import java.io.ByteArrayInputStream;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
@@ -25,7 +26,8 @@ public class JdbcNativePostRepositoryImpl implements PostRepository {
             rs.getString("body"),
             rs.getString("short_body"),
             rs.getLong("like_count"),
-            rs.getString("tags")
+            rs.getString("tags"),
+            rs.getBytes("image")
     );
 
     @Autowired
@@ -39,7 +41,7 @@ public class JdbcNativePostRepositoryImpl implements PostRepository {
         int offset = (page - 1) * size;
         if (StringUtils.isBlank(filterByTag)) {
             String sql = """
-                SELECT p.id, p.title, p.body, p.short_body, pc.count as like_count, p.tags
+                SELECT p.id, p.title, p.body, p.short_body, pc.count as like_count, p.tags, p.image
                         FROM posts p LEFT JOIN posts_like_count pc ON p.id = pc.post_id 
                         ORDER BY p.id DESC 
                         LIMIT ? OFFSET ?
@@ -47,7 +49,7 @@ public class JdbcNativePostRepositoryImpl implements PostRepository {
             return jdbcTemplate.query(sql, postRowMapper, size, offset);
         } else {
             String sql = """
-                SELECT p.id, p.title, p.body, p.short_body, pc.count as like_count, p.tags
+                SELECT p.id, p.title, p.body, p.short_body, pc.count as like_count, p.tags, p.image
                         FROM posts p LEFT JOIN posts_like_count pc ON p.id = pc.post_id                
                         WHERE p.id IN 
                               (SELECT post_id FROM post_tag pt JOIN tags t on pt.tag_id = t.id WHERE t.name = ?)
@@ -62,7 +64,7 @@ public class JdbcNativePostRepositoryImpl implements PostRepository {
     @Override
     public Optional<Post> findPostById(Long id) {
         String sql = """
-                SELECT p.id, p.title, p.body, p.short_body, pc.count as like_count, p.tags
+                SELECT p.id, p.title, p.body, p.short_body, pc.count as like_count, p.tags, p.image
                 FROM posts p LEFT JOIN posts_like_count pc ON p.id = pc.post_id
                 WHERE id = ?
                 """;
@@ -73,8 +75,10 @@ public class JdbcNativePostRepositoryImpl implements PostRepository {
 
     @Override
     public long createPost(Post post) {
-        String sql = "INSERT INTO posts(title, body, short_body, tags) VALUES(?, ?, ?, ?)";
+        String sql = "INSERT INTO posts(title, body, short_body, tags, image) VALUES(?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        ByteArrayInputStream imageInputStream = Optional.ofNullable(post.image()).map(ByteArrayInputStream::new).orElse(null);
 
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -82,6 +86,7 @@ public class JdbcNativePostRepositoryImpl implements PostRepository {
             ps.setString(2, post.body());
             ps.setString(3, post.shortBody());
             ps.setString(4, post.tags());
+            ps.setBinaryStream(5, imageInputStream);
             return ps;
         }, keyHolder);
 
@@ -90,8 +95,8 @@ public class JdbcNativePostRepositoryImpl implements PostRepository {
 
     @Override
     public boolean updatePost(Post post) {
-        String sql = "UPDATE posts SET title = ?, body = ?, short_body = ? , tags = ? WHERE id = ?";
-        int rowsAffected = jdbcTemplate.update(sql, post.title(), post.body(), post.shortBody(), post.tags(), post.id());
+        String sql = "UPDATE posts SET title = ?, body = ?, short_body = ?, tags = ?, image = ? WHERE id = ?";
+        int rowsAffected = jdbcTemplate.update(sql, post.title(), post.body(), post.shortBody(), post.tags(), post.image(), post.id());
         return rowsAffected != 0;
     }
 
@@ -131,9 +136,9 @@ public class JdbcNativePostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public long likePost(long postId) {
+    public void likePost(long postId) {
         String sql = "UPDATE posts_like_count SET count = count + 1  WHERE post_id = ?";
-        return jdbcTemplate.update(sql, postId);
+        jdbcTemplate.update(sql, postId);
     }
 
 }

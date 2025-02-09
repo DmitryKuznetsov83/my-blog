@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.dao.Post.PostRepository;
-import ru.yandex.practicum.dao.Tag.TagRepository;
 import ru.yandex.practicum.mapper.PostMapper;
+import ru.yandex.practicum.model.Post;
 import ru.yandex.practicum.service.Tag.TagService;
 import ru.yandex.practicum.view_model.*;
 
@@ -86,6 +86,11 @@ public class PostServiceImp implements PostService{
     @Override
     public List<TagDto> findAllTags() {
         return tagService.findAllTags();
+    }
+
+    @Override
+    public Optional<byte[]> findImageByPostId(Long id) {
+        return postRepository.findPostById(id).map(Post::image);
     }
 
 

@@ -5,4 +5,5 @@ public record Post(Long id,
                    String body,
                    String shortBody,
                    Long likeCounter,
-                   String tags) {}
+                   String tags,
+                   byte[] image) {}

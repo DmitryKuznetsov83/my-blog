@@ -1,7 +1,10 @@
+-- DROP ALL OBJECTS;
+--
 -- DROP TABLE IF EXISTS posts_like_count;
 -- DROP TABLE IF EXISTS posts_tag;
--- DROP TABLE IF EXISTS posts;
 -- DROP TABLE IF EXISTS tags;
+-- DROP TABLE IF EXISTS posts;
+
 
 create table if not exists posts
 (
@@ -9,7 +12,8 @@ create table if not exists posts
   title varchar(256) not null,
   body varchar(1024) not null,
   short_body varchar(1024) not null,
-  tags varchar(256)
+  tags varchar(256),
+  image blob
 );
 
 create table if not exists posts_like_count

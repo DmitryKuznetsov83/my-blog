@@ -2,6 +2,9 @@ package ru.yandex.practicum.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -101,6 +104,21 @@ public class PostController {
         postService.likePost(id);
         return "redirect:/posts/" + id;
     }
+
+    // IMAGES
+    @GetMapping("{id}/image")
+    public ResponseEntity<ByteArrayResource> images(@PathVariable(name = "id") Long id) {
+        Optional<byte[]> image = postService.findImageByPostId(id);
+        if (image.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        ByteArrayResource resource = new ByteArrayResource(image.get());
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG) // или IMAGE_PNG
+                .body(resource);
+    }
+
 
     // PRIVATE
 

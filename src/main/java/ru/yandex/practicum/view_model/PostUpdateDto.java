@@ -1,8 +1,9 @@
 package ru.yandex.practicum.view_model;
 
-import io.micrometer.common.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 public record PostUpdateDto(Long id,
                             String title,
                             String body,
-                            String tags) {}
+                            String tags,
+                            MultipartFile image) {}
