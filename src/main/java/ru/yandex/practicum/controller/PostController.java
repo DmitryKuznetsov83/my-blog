@@ -9,9 +9,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.service.Comment.CommentService;
 import ru.yandex.practicum.service.Post.PostService;
-import ru.yandex.practicum.view_model.*;
+import ru.yandex.practicum.view_model.Comment.CommentFullViewDto;
+import ru.yandex.practicum.view_model.Post.PostCreateDto;
+import ru.yandex.practicum.view_model.Post.PostFullViewDto;
+import ru.yandex.practicum.view_model.Post.PostPreviewDto;
+import ru.yandex.practicum.view_model.Post.PostUpdateDto;
+import ru.yandex.practicum.view_model.Tag.TagDto;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.Arrays;
@@ -26,13 +33,15 @@ import java.util.stream.Collectors;
 public class PostController {
 
     private final PostService postService;
+    private final CommentService commentService;
 
     @Value("${myBlog.pagingOptions:10,20,50}")
     private String pagingOptionsString;
 
     @Autowired
-    public PostController(PostService postService) {
+    public PostController(PostService postService, CommentService commentService) {
         this.postService = postService;
+        this.commentService = commentService;
     }
 
 
@@ -69,8 +78,10 @@ public class PostController {
     public String getPost(Model model, @PathVariable(name = "id") Long id) {
         Optional<PostFullViewDto> maybePost = postService.findPostById(id);
         if (maybePost.isPresent()) {
+            List<CommentFullViewDto> comments = commentService.getCommentsByPostId(id);
             model.addAttribute("mode", "review/updatePost");
             model.addAttribute("post", maybePost.get());
+            model.addAttribute("comments", comments);
             return "post";
         } else {
             return "status_404";
@@ -90,12 +101,7 @@ public class PostController {
 
     @PostMapping(value = "/{id}", params = "_method=delete")
     public String deletePost(@PathVariable(name = "id") Long id) {
-        if (postService.deletePostById(id)) {
-            return "redirect:/posts";
-        } else {
-            return "status_404";
-        }
-
+        return (postService.deletePostById(id) ? "redirect:/posts" : "status_404");
     }
 
     // LIKES

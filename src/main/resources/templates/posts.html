@@ -99,6 +99,7 @@
         <th>Title</th>
         <th>Short body</th>
         <th>Likes</th>
+        <th>Comments</th>
         <th>Tags</th>
     </tr>
     </thead>
@@ -113,6 +114,7 @@
         </td>
         <td th:text="${post.shortBody}"/>
         <td th:text="${post.likeCounter}"/>
+        <td th:text="${post.commentCounter}"/>
         <td th:text="${post.tags}"/>
     </tr>
     </tbody>

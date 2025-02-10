@@ -26,6 +26,7 @@ public class JdbcNativePostRepositoryImpl implements PostRepository {
             rs.getString("body"),
             rs.getString("short_body"),
             rs.getLong("like_count"),
+            rs.getLong("comment_count"),
             rs.getString("tags"),
             rs.getBytes("image")
     );
@@ -41,16 +42,20 @@ public class JdbcNativePostRepositoryImpl implements PostRepository {
         int offset = (page - 1) * size;
         if (StringUtils.isBlank(filterByTag)) {
             String sql = """
-                SELECT p.id, p.title, p.body, p.short_body, pc.count as like_count, p.tags, p.image
-                        FROM posts p LEFT JOIN posts_like_count pc ON p.id = pc.post_id 
-                        ORDER BY p.id DESC 
-                        LIMIT ? OFFSET ?
-                """;
+                    SELECT p.id, p.title, p.body, p.short_body, pc.count AS like_count, cc.count AS comment_count, p.tags, p.image
+                            FROM posts p 
+                                LEFT JOIN posts_like_count pc ON p.id = pc.post_id 
+                                LEFT JOIN comment_counter cc ON p.id = cc.post_id 
+                            ORDER BY p.id DESC 
+                            LIMIT ? OFFSET ?
+                    """;
             return jdbcTemplate.query(sql, postRowMapper, size, offset);
         } else {
             String sql = """
-                SELECT p.id, p.title, p.body, p.short_body, pc.count as like_count, p.tags, p.image
-                        FROM posts p LEFT JOIN posts_like_count pc ON p.id = pc.post_id                
+                SELECT p.id, p.title, p.body, p.short_body, pc.count AS like_count, cc.count AS comment_count, p.tags, p.image
+                        FROM posts p 
+                            LEFT JOIN posts_like_count pc ON p.id = pc.post_id                
+                            LEFT JOIN comment_counter cc ON p.id = cc.post_id 
                         WHERE p.id IN 
                               (SELECT post_id FROM post_tag pt JOIN tags t on pt.tag_id = t.id WHERE t.name = ?)
                         ORDER BY p.id DESC 
@@ -64,8 +69,9 @@ public class JdbcNativePostRepositoryImpl implements PostRepository {
     @Override
     public Optional<Post> findPostById(Long id) {
         String sql = """
-                SELECT p.id, p.title, p.body, p.short_body, pc.count as like_count, p.tags, p.image
-                FROM posts p LEFT JOIN posts_like_count pc ON p.id = pc.post_id
+                SELECT p.id, p.title, p.body, p.short_body, pc.count AS like_count, 0 AS comment_count, p.tags, p.image
+                FROM posts p 
+                    LEFT JOIN posts_like_count pc ON p.id = pc.post_id
                 WHERE id = ?
                 """;
         return jdbcTemplate.query(sql, postRowMapper, id)

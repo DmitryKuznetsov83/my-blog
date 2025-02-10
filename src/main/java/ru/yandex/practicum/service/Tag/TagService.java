@@ -1,6 +1,6 @@
 package ru.yandex.practicum.service.Tag;
 
-import ru.yandex.practicum.view_model.TagDto;
+import ru.yandex.practicum.view_model.Tag.TagDto;
 
 import java.util.List;
 

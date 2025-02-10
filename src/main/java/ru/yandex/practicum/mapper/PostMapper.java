@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.practicum.model.Post;
-import ru.yandex.practicum.view_model.PostCreateDto;
-import ru.yandex.practicum.view_model.PostFullViewDto;
-import ru.yandex.practicum.view_model.PostPreviewDto;
-import ru.yandex.practicum.view_model.PostUpdateDto;
+import ru.yandex.practicum.view_model.Post.PostCreateDto;
+import ru.yandex.practicum.view_model.Post.PostFullViewDto;
+import ru.yandex.practicum.view_model.Post.PostPreviewDto;
+import ru.yandex.practicum.view_model.Post.PostUpdateDto;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,6 +28,7 @@ public class PostMapper {
                 post.title(),
                 post.shortBody(),
                 post.likeCounter(),
+                post.commentCounter(),
                 post.tags(),
                 post.image() != null);
     }
@@ -38,6 +39,7 @@ public class PostMapper {
                 postCreateDto.body(),
                 extractFirstLines(postCreateDto.body()),
                 0L,
+                0L,
                 postCreateDto.tags(),
                 getImageBytes(postCreateDto.image()));
     }
@@ -47,6 +49,7 @@ public class PostMapper {
                 postUpdateDto.title(),
                 postUpdateDto.body(),
                 extractFirstLines(postUpdateDto.body()),
+                0L,
                 0L,
                 postUpdateDto.tags(),
                 getImageBytes(postUpdateDto.image()));

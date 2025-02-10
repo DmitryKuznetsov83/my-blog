@@ -6,8 +6,13 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.dao.Post.PostRepository;
 import ru.yandex.practicum.mapper.PostMapper;
 import ru.yandex.practicum.model.Post;
+import ru.yandex.practicum.service.Comment.CommentService;
 import ru.yandex.practicum.service.Tag.TagService;
-import ru.yandex.practicum.view_model.*;
+import ru.yandex.practicum.view_model.Post.PostCreateDto;
+import ru.yandex.practicum.view_model.Post.PostFullViewDto;
+import ru.yandex.practicum.view_model.Post.PostPreviewDto;
+import ru.yandex.practicum.view_model.Post.PostUpdateDto;
+import ru.yandex.practicum.view_model.Tag.TagDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,12 +22,14 @@ public class PostServiceImp implements PostService{
 
     private final PostRepository postRepository;
     private final TagService tagService;
+    private final CommentService commentService;
     private final PostMapper postMapper;
 
     @Autowired
-    public PostServiceImp(PostRepository postRepository, TagService tagService, PostMapper postMapper) {
+    public PostServiceImp(PostRepository postRepository, TagService tagService, CommentService commentService, PostMapper postMapper) {
         this.postRepository = postRepository;
         this.tagService = tagService;
+        this.commentService = commentService;
         this.postMapper = postMapper;
     }
 
@@ -43,6 +50,7 @@ public class PostServiceImp implements PostService{
     public long createPost(PostCreateDto post) {
         long postId = postRepository.createPost(postMapper.mapToPost(post));
         postRepository.createLikeCounter(postId);
+        commentService.createCommentCounter(postId);
         tagService.bindTagsToPost(postId, post.tags());
         return postId;
     }
@@ -62,6 +70,7 @@ public class PostServiceImp implements PostService{
     @Transactional
     public boolean deletePostById(Long id) {
         boolean success = postRepository.deleteLikeCounter(id);
+        boolean success2 = commentService.deleteCommentCounter(id);
         tagService.unbindAllTagsFromPost(id);
         boolean result = postRepository.deletePostById(id);
 
@@ -89,9 +98,9 @@ public class PostServiceImp implements PostService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<byte[]> findImageByPostId(Long id) {
         return postRepository.findPostById(id).map(Post::image);
     }
-
 
 }

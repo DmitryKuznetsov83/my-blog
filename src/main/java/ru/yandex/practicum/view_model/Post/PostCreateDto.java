@@ -1,4 +1,4 @@
-package ru.yandex.practicum.view_model;
+package ru.yandex.practicum.view_model.Post;
 
 import org.springframework.web.multipart.MultipartFile;
 
