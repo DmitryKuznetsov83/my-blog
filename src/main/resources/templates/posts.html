@@ -54,7 +54,7 @@
 <body>
 <h1>myBlog - post feed</h1>
 
-
+<!--PAGING OPTIONS-->
 <form method="get" th:action="@{/posts}">
     <label for="size">Show on page:</label>
     <input type="hidden" name="page" th:value="1">
@@ -64,6 +64,7 @@
     </select>
 </form>
 
+<!--PAGING NAVIGATION-->
 <div>
     <a th:href="${currentPage > 1} ? @{/posts(page=${currentPage - 1}, size=${size})} : '#'"
        th:classappend="${currentPage == 1} ? 'disabled'">Prev</a>
@@ -74,8 +75,10 @@
        th:classappend="${currentPage == totalPages} ? 'disabled'">Next</a>
 </div>
 
-<br>
+<br />
 
+
+<!--TAG FILTER-->
 <form method="get" th:action="@{/posts}">
     <label for="filterByTag">Filter by tag:</label>
     <input type="hidden" name="page" th:value="1">
@@ -86,11 +89,10 @@
     </select>
 </form>
 
+<br />
 
-<br>
-
+<!--POST TABLE-->
 <a th:href="@{/posts/create}">Create new post</a>
-
 <table>
     <thead>
     <tr>

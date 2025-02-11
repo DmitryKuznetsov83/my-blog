@@ -67,7 +67,8 @@ public class PostController {
 
     @GetMapping("/create")
     public String createPage(Model model) {
-        model.addAttribute("mode", "newPost");
+        model.addAttribute("mode", "new");
+        model.addAttribute("post", new PostUpdateDto(null,null, null, null, null));
         return "post";
     }
 
@@ -76,7 +77,7 @@ public class PostController {
         Optional<PostFullViewDto> maybePost = postService.findPostById(id);
         if (maybePost.isPresent()) {
             List<CommentFullViewDto> comments = commentService.getCommentsByPostId(id);
-            model.addAttribute("mode", "review/updatePost");
+            model.addAttribute("mode", "update");
             model.addAttribute("post", maybePost.get());
             model.addAttribute("comments", comments);
             return "post";
