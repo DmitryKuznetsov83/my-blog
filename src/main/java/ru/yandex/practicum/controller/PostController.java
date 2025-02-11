@@ -9,8 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.service.Comment.CommentService;
-import ru.yandex.practicum.service.Post.PostService;
+import ru.yandex.practicum.service.comment.CommentService;
+import ru.yandex.practicum.service.post.PostService;
 import ru.yandex.practicum.view_model.Comment.CommentFullViewDto;
 import ru.yandex.practicum.view_model.Post.PostCreateDto;
 import ru.yandex.practicum.view_model.Post.PostFullViewDto;
@@ -18,7 +18,6 @@ import ru.yandex.practicum.view_model.Post.PostPreviewDto;
 import ru.yandex.practicum.view_model.Post.PostUpdateDto;
 import ru.yandex.practicum.view_model.Tag.TagDto;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.Arrays;

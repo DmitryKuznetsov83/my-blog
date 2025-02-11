@@ -1,21 +1,11 @@
--- DROP ALL OBJECTS;
---
--- DROP TABLE IF EXISTS posts_like_count;
--- DROP TABLE IF EXISTS comment_counter;
--- DROP TABLE IF EXISTS post_tag;
--- DROP TABLE IF EXISTS comments;
--- DROP TABLE IF EXISTS tags;
--- DROP TABLE IF EXISTS posts;
-
-
 create table if not exists posts
 (
-  id bigserial primary key,
-  title varchar(256) not null,
-  body varchar(1024) not null,
-  short_body varchar(1024) not null,
-  tags varchar(256),
-  image blob
+    id bigserial primary key,
+    title varchar(256) not null,
+    body varchar(1024) not null,
+    short_body varchar(1024) not null,
+    tags varchar(256),
+    image blob
 );
 
 create table if not exists posts_like_count

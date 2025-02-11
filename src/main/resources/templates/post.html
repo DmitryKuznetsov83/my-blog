@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org"> <!-- Добавляем неймспейс для thymeleaf-->
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>myBlog</title>
     <style>
         body {
@@ -79,12 +79,12 @@
     <textarea th:text="${post.title}" th:value="${post.title}" id="title" name="title" rows="1" cols="100" placeholder="text..." required="true"></textarea>
 
     <label>Choose picture:</label>
-    <input type="file" name="image" accept="image/*" id="image" onchange="previewImage(event)">
+    <input type="file" name="image" accept="image/*" id="image" onchange="previewImage(event)" />
 
     <button type="button" onclick="clearImage()">Clear Image</button>
 
     <div id="previewContainer" style="display: none; margin-top: 10px;">
-        <img id="imagePreview" src="#" style="max-width: 200px; display: block;">
+        <img id="imagePreview" src="#" style="max-width: 200px; display: block;" />
     </div>
 
     <label for="body">body:</label>
@@ -100,12 +100,12 @@
 <form th:if="${mode == 'review/updatePost'}" th:action="@{/posts/{id}/like(id=${post.id})}" method="POST">
     <button type="submit">Like</button>
 </form>
-<span th:if="${mode == 'review/updatePost'}" th:text="'likes: ' + ${post.likeCounter}"></span>
+<span id = "like_counter" th:if="${mode == 'review/updatePost'}" th:text="'likes: ' + ${post.likeCounter}"></span>
 
 <!--UPDATE POST-->
 <form th:if="${mode == 'review/updatePost'}" th:action="@{/posts}" method="POST" enctype="multipart/form-data">
 
-    <input type="hidden" name="_method" value="update">
+    <input type="hidden" name="_method" value="update" />
     <button type="submit">Update</button>
 
     <label for="id">id:</label>
@@ -115,12 +115,12 @@
     <textarea th:text="${post.title}" id="title" name="title" rows="1" cols="100" placeholder="text..." required="true"></textarea>
 
     <label>Choose picture:</label>
-    <input type="file" name="image" accept="image/*" id="image" onchange="previewImage(event)">
+    <input type="file" name="image" accept="image/*" id="image" onchange="previewImage(event)" />
 
     <button type="button" onclick="clearImage()">Clear Image</button>
 
     <div id="previewContainer" style="margin-top: 10px;">
-        <img id="imagePreview" th:src="@{/posts/{id}/image(id=${post.id})}" alt = "image" style="max-width: 200px; display: block;">
+        <img id="imagePreview" th:src="@{/posts/{id}/image(id=${post.id})}" alt = "image" style="max-width: 200px; display: block;" />
     </div>
 
     <label for="body">body:</label>
@@ -130,7 +130,7 @@
     <textarea th:text="${post.tags}" id="tags" name="tags" rows="1" cols="100" placeholder="tags..."></textarea>
 </form>
 
-<br>
+<br />
 
 <!--COMMENTS-->
 <label th:if="${mode == 'review/updatePost'}" for="comments">comments:</label>
@@ -140,7 +140,7 @@
     <button type="submit">Add comment</button>
 </form>
 
-<table  th:if="${mode == 'review/updatePost'}" id=comments>
+<table  th:if="${mode == 'review/updatePost'}" id="comments">
     <thead>
     <tr>
         <th>ID</th>
@@ -155,7 +155,7 @@
         <td>
             <form th:action="@{/posts/{postId}/comments/{commentId}(postId=${post.id}, commentId=${comment.id})}"
                   method="POST" style="display:inline;">
-                <input type="hidden" name="_method" value="delete">
+                <input type="hidden" name="_method" value="delete" />
                 <button type="submit">Delete comment</button>
             </form>
         </td>
@@ -165,12 +165,9 @@
 
 <!--DELETE POST -->
 <form th:if="${mode == 'review/updatePost'}" th:action="@{/posts/{id}(id=${post.id})}" method="POST" style="display:inline;">
-    <input type="hidden" name="_method" value="delete">
+    <input type="hidden" name="_method" value="delete" />
     <button type="submit">Delete</button>
 </form>
-
-</body>
-
 
 
 <script>
@@ -190,51 +187,8 @@
         reader.readAsDataURL(event.target.files[0]);
     }
 
-    function editComment(commentId) {
-        var commentElement = document.getElementById('comment-' + commentId);
-        var commentText = commentElement.innerText;
-
-        // Создаем текстовое поле для редактирования
-        var inputElement = document.createElement('input');
-        inputElement.type = 'text';
-        inputElement.value = commentText;
-
-        // Заменяем текст комментария на поле ввода
-        commentElement.innerText = '';
-        commentElement.appendChild(inputElement);
-        inputElement.focus();
-
-        // Обработчик события для сохранения комментария по Ctrl+Enter
-        inputElement.addEventListener('keydown', function(event) {
-            if (event.ctrlKey && event.key === 'Enter') {
-                var newCommentText = inputElement.value;
-
-                // Отправляем данные на сервер для сохранения
-                fetch('/updateComment', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': /*[[${_csrf.token}]]*/ ''
-                    },
-                    body: JSON.stringify({
-                        id: commentId,
-                        body: newCommentText
-                    })
-                }).then(response => {
-                    if (response.ok) {
-                        // Обновляем текст комментария на странице
-                        commentElement.innerText = newCommentText;
-                    } else {
-                        alert('Ошибка при сохранении комментария');
-                    }
-                }).catch(error => {
-                    console.error('Ошибка:', error);
-                });
-            }
-        });
-    }
-
 </script>
 
+</body>
 
 </html>

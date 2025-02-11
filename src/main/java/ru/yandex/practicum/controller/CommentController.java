@@ -3,7 +3,7 @@ package ru.yandex.practicum.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.service.Comment.CommentService;
+import ru.yandex.practicum.service.comment.CommentService;
 import ru.yandex.practicum.view_model.Comment.CommentCreateDto;
 import ru.yandex.practicum.view_model.Comment.CommentFullViewDto;
 

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import ru.yandex.practicum.service.Tag.TagService;
+import ru.yandex.practicum.service.tag.TagService;
 import ru.yandex.practicum.view_model.Tag.TagDto;
 
 import java.util.List;
