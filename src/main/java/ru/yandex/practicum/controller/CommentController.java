@@ -19,7 +19,7 @@ public class CommentController {
     }
 
     @PostMapping
-    public String createComment(@PathVariable(name = "postId") Long postId,
+    public String createComment(@PathVariable(name = "postId") long postId,
                               @RequestParam(name = "body") String body) {
         CommentCreateDto commentCreateDto = new CommentCreateDto(postId, body);
         commentService.createComment(commentCreateDto);
@@ -27,16 +27,16 @@ public class CommentController {
     }
 
     @PostMapping(value = "/{commentId}", params = "_method=update")
-    public String updateComment(@PathVariable(name = "postId") Long postId,
-                              @PathVariable(name = "commentId") Long commentId,
+    public String updateComment(@PathVariable(name = "postId") long postId,
+                              @PathVariable(name = "commentId") long commentId,
                               @RequestParam(name = "body") String body) {
         CommentFullViewDto commentFullViewDto = new CommentFullViewDto(commentId, postId, body);
         return (commentService.updateComment(commentFullViewDto) ? "redirect:/posts/" + postId :  "status_404");
     }
 
     @PostMapping(value = "/{commentId}", params = "_method=delete")
-    public String deleteComment(@PathVariable(name = "postId") Long postId,
-                              @PathVariable(name = "commentId") Long commentId) {
+    public String deleteComment(@PathVariable(name = "postId") long postId,
+                              @PathVariable(name = "commentId") long commentId) {
         return (commentService.deleteCommentById(postId, commentId) ? "redirect:/posts/" + postId : "status_404");
     }
 }

@@ -101,7 +101,7 @@ public class JdbcNativeTagRepository implements TagRepository {
     }
 
     @Override
-    public void unbindAllTagsFromPost(Long postId) {
+    public void unbindAllTagsFromPost(long postId) {
         String sql = "DELETE FROM post_tag WHERE post_id = ?";
         jdbcTemplate.update(sql, postId);
     }

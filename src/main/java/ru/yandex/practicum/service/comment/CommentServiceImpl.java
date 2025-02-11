@@ -1,5 +1,7 @@
 package ru.yandex.practicum.service.comment;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +14,8 @@ import java.util.List;
 
 @Service
 public class CommentServiceImpl implements CommentService{
+
+    private static final Logger log = LoggerFactory.getLogger(CommentServiceImpl.class);
 
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
@@ -38,17 +42,23 @@ public class CommentServiceImpl implements CommentService{
     @Override
     @Transactional
     public boolean updateComment(CommentFullViewDto commentFullViewDto) {
-        return commentRepository.updateComment(commentMapper.mapToComment(commentFullViewDto));
+        boolean successfulUpdate = commentRepository.updateComment(commentMapper.mapToComment(commentFullViewDto));
+        if (!successfulUpdate) {
+            log.warn("Comment id={}, postId={} not found", commentFullViewDto.id(), commentFullViewDto.postId());
+        }
+        return successfulUpdate;
     }
 
     @Override
     @Transactional
     public boolean deleteCommentById(long postId, long commentId) {
-        boolean success = commentRepository.deleteCommentById(postId, commentId);
-        if (success) {
+        boolean successfulDeletion = commentRepository.deleteCommentById(postId, commentId);
+        if (successfulDeletion) {
             commentRepository.decreaseCommentCounter(postId);
+        } else {
+            log.warn("Comment id={}, postId={} not found", commentId, postId);
         }
-        return success;
+        return successfulDeletion;
     }
 
     @Override

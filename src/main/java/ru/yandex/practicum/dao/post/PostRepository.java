@@ -7,13 +7,13 @@ import java.util.Optional;
 
 public interface PostRepository {
 
-    Optional<Post> findPostById(Long id);
+    Optional<Post> findPostById(long id);
 
     long createPost(Post post);
 
     boolean updatePost(Post post);
 
-    boolean deletePostById(Long id);
+    boolean deletePostById(long id);
 
     List<Post> findPostByPage(int page, int size, String filterByTag);
 
@@ -21,7 +21,7 @@ public interface PostRepository {
 
     void createLikeCounter(long postId);
 
-    boolean deleteLikeCounter(Long id);
+    boolean deleteLikeCounter(long id);
 
     void likePost(long postId);
 }

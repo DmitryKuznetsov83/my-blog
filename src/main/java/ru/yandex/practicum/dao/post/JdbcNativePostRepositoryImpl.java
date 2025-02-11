@@ -67,7 +67,7 @@ public class JdbcNativePostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public Optional<Post> findPostById(Long id) {
+    public Optional<Post> findPostById(long id) {
         String sql = """
                 SELECT p.id, p.title, p.body, p.short_body, pc.count AS like_count, 0 AS comment_count, p.tags, p.image
                 FROM posts p 
@@ -107,7 +107,7 @@ public class JdbcNativePostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public boolean deletePostById(Long id) {
+    public boolean deletePostById(long id) {
         int rowsAffected = jdbcTemplate.update("DELETE FROM posts WHERE id = ?", id);
         return rowsAffected != 0;
     }
@@ -136,7 +136,7 @@ public class JdbcNativePostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public boolean deleteLikeCounter(Long id) {
+    public boolean deleteLikeCounter(long id) {
         int rowsAffected = jdbcTemplate.update("DELETE FROM posts_like_count WHERE post_id = ?", id);
         return rowsAffected != 0;
     }

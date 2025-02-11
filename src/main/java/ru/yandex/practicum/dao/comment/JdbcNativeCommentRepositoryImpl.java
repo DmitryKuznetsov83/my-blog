@@ -31,7 +31,7 @@ public class JdbcNativeCommentRepositoryImpl implements CommentRepository {
 
 
     @Override
-    public List<Comment> getCommentsByPostId(Long postId) {
+    public List<Comment> getCommentsByPostId(long postId) {
         String sql = "SELECT id, post_id, body FROM comments WHERE post_id = ? ORDER BY id DESC";
         return jdbcTemplate.query(sql, postRowMapper, postId);
     }
@@ -59,7 +59,7 @@ public class JdbcNativeCommentRepositoryImpl implements CommentRepository {
     }
 
     @Override
-    public boolean deleteCommentById(Long postId, Long commentId) {
+    public boolean deleteCommentById(long postId, long commentId) {
         int rowsAffected = jdbcTemplate.update("DELETE FROM comments WHERE post_id = ? AND id = ?", postId, commentId);
         return rowsAffected != 0;
     }
@@ -83,7 +83,7 @@ public class JdbcNativeCommentRepositoryImpl implements CommentRepository {
     }
 
     @Override
-    public void decreaseCommentCounter(Long postId) {
+    public void decreaseCommentCounter(long postId) {
         String sql = "UPDATE comment_counter SET count = count - 1  WHERE post_id = ?";
         jdbcTemplate.update(sql, postId);
     }

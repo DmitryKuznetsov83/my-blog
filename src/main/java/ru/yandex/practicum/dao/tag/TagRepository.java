@@ -18,6 +18,6 @@ public interface TagRepository {
 
     void unbindTagsFromPost(long postId, List<Long> tagIds);
 
-    void unbindAllTagsFromPost(Long postId);
+    void unbindAllTagsFromPost(long postId);
 
 }

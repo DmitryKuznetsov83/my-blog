@@ -83,7 +83,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     @Transactional
-    public void unbindAllTagsFromPost(Long postId) {
+    public void unbindAllTagsFromPost(long postId) {
         tagRepository.unbindAllTagsFromPost(postId);
     }
 

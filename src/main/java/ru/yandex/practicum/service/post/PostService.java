@@ -13,19 +13,19 @@ public interface PostService {
 
     List<PostPreviewDto> findPostsByPage(int page, int size, String filterByTag);
 
-    Optional<PostFullViewDto> findPostById(Long id);
+    Optional<PostFullViewDto> findPostById(long id);
 
     long createPost(PostCreateDto post);
 
     boolean updatePost(PostUpdateDto post);
 
-    boolean deletePostById(Long id);
+    boolean deletePostById(long id);
 
     long getPagesTotalCount(Integer pageSize, String filterByTag);
 
-    void likePost(Long id);
+    void likePost(long id);
 
     List<TagDto> findAllTags();
 
-    Optional<byte[]> findImageByPostId(Long id);
+    Optional<byte[]> findImageByPostId(long id);
 }

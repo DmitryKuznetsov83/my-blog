@@ -76,7 +76,7 @@
     <button type="submit">Save</button>
 
     <label for="title">title:</label>
-    <textarea th:text="${post.title}" th:value="${post.title}" id="title" name="title" rows="1" cols="100" placeholder="text..." required="true"></textarea>
+    <textarea id="title" name="title" rows="1" cols="100" placeholder="text..." required="true"></textarea>
 
     <label>Choose picture:</label>
     <input type="file" name="image" accept="image/*" id="image" onchange="previewImage(event)" />
@@ -88,10 +88,10 @@
     </div>
 
     <label for="body">body:</label>
-    <textarea th:text="${post.body}" id="body" name="body" rows="4" cols="100" placeholder="text..." required="true"></textarea>
+    <textarea id="body" name="body" rows="4" cols="100" placeholder="text..." required="true"></textarea>
 
     <label for="tags">tags:</label>
-    <textarea th:text="${post.tags}" id="tags" name="tags" rows="1" cols="100" placeholder="tags..."></textarea>
+    <textarea id="tags" name="tags" rows="1" cols="100" placeholder="tags..."></textarea>
 
 </form>
 

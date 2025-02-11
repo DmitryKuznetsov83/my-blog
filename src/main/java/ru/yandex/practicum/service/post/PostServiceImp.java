@@ -1,5 +1,7 @@
 package ru.yandex.practicum.service.post;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,8 @@ import java.util.Optional;
 
 @Service
 public class PostServiceImp implements PostService{
+
+    private static final Logger log = LoggerFactory.getLogger(PostServiceImp.class);
 
     private final PostRepository postRepository;
     private final TagService tagService;
@@ -41,7 +45,7 @@ public class PostServiceImp implements PostService{
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<PostFullViewDto> findPostById(Long id) {
+    public Optional<PostFullViewDto> findPostById(long id) {
         return postRepository.findPostById(id).map(postMapper::mapToPostFullDto);
     }
 
@@ -61,22 +65,23 @@ public class PostServiceImp implements PostService{
         boolean successfulUpdate = postRepository.updatePost(postMapper.mapToPost(post));
         if (successfulUpdate) {
             tagService.updateTags(post.id(), post.tags());
+        } else {
+            log.warn("Post id={} not found", post.id());
         }
         return successfulUpdate;
-        // WARNING post not found
     }
 
     @Override
     @Transactional
-    public boolean deletePostById(Long id) {
-        boolean success = postRepository.deleteLikeCounter(id);
-        boolean success2 = commentService.deleteCommentCounter(id);
+    public boolean deletePostById(long id) {
+        postRepository.deleteLikeCounter(id);
+        commentService.deleteCommentCounter(id);
         tagService.unbindAllTagsFromPost(id);
-        boolean result = postRepository.deletePostById(id);
-
-        // WARNING post not found
-        // WARNING counter not found
-        return result;
+        boolean successfulDeletion = postRepository.deletePostById(id);
+        if (!successfulDeletion) {
+            log.warn("Post id={} not found", id);
+        }
+        return successfulDeletion;
     }
 
     @Override
@@ -88,7 +93,7 @@ public class PostServiceImp implements PostService{
 
     @Override
     @Transactional
-    public void likePost(Long id) {
+    public void likePost(long id) {
         postRepository.likePost(id);
     }
 
@@ -99,7 +104,7 @@ public class PostServiceImp implements PostService{
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<byte[]> findImageByPostId(Long id) {
+    public Optional<byte[]> findImageByPostId(long id) {
         return postRepository.findPostById(id).map(Post::image);
     }
 

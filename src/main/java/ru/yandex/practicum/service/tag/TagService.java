@@ -12,6 +12,6 @@ public interface TagService {
 
     void updateTags(long postId, String tags);
 
-    void unbindAllTagsFromPost(Long postId);
+    void unbindAllTagsFromPost(long postId);
 
 }

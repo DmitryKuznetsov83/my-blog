@@ -67,14 +67,12 @@ public class PostController {
 
     @GetMapping("/create")
     public String createPage(Model model) {
-        PostCreateDto emptyPost = PostCreateDto.emptyPost();
         model.addAttribute("mode", "newPost");
-        model.addAttribute("post", emptyPost);
         return "post";
     }
 
     @GetMapping("/{id}")
-    public String getPost(Model model, @PathVariable(name = "id") Long id) {
+    public String getPost(Model model, @PathVariable(name = "id") long id) {
         Optional<PostFullViewDto> maybePost = postService.findPostById(id);
         if (maybePost.isPresent()) {
             List<CommentFullViewDto> comments = commentService.getCommentsByPostId(id);
@@ -99,20 +97,22 @@ public class PostController {
     }
 
     @PostMapping(value = "/{id}", params = "_method=delete")
-    public String deletePost(@PathVariable(name = "id") Long id) {
+    public String deletePost(@PathVariable(name = "id") long id) {
         return (postService.deletePostById(id) ? "redirect:/posts" : "status_404");
     }
 
+
     // LIKES
     @PostMapping(value = "/{id}/like")
-    public String likePost(@PathVariable(name = "id") Long id) {
+    public String likePost(@PathVariable(name = "id") long id) {
         postService.likePost(id);
         return "redirect:/posts/" + id;
     }
 
+
     // IMAGES
     @GetMapping("{id}/image")
-    public ResponseEntity<ByteArrayResource> images(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<ByteArrayResource> images(@PathVariable(name = "id") long id) {
         Optional<byte[]> image = postService.findImageByPostId(id);
         if (image.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -126,7 +126,6 @@ public class PostController {
 
 
     // PRIVATE
-
     private static List<Integer> pagingOptions(String pagingOptionsString) {
         return Arrays.stream(pagingOptionsString.split(","))
                 .map(Integer::parseInt)
@@ -134,14 +133,3 @@ public class PostController {
     }
 
 }
-
-
-
-// todo: валидации
-// todo: добавить валидации для dto и model
-// todo: 404, 400 - details
-// todo: logging
-// todo: clean HTML
-// todo: при закрытиии поста пагинация не слетает
-// todo: page size в классе
-// todo: упростить логику по Tags

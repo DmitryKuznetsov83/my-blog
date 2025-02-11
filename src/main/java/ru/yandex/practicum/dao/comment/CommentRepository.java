@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface CommentRepository {
 
-    List<Comment> getCommentsByPostId(Long postId);
+    List<Comment> getCommentsByPostId(long postId);
 
     void createComment(Comment comment);
 
     boolean updateComment(Comment comment);
 
-    boolean deleteCommentById(Long postId, Long commentId);
+    boolean deleteCommentById(long postId, long commentId);
 
     void createCommentCounter(long postId);
 
@@ -20,6 +20,6 @@ public interface CommentRepository {
 
     void increaseCommentCounter(long commentId);
 
-    void decreaseCommentCounter(Long commentId);
+    void decreaseCommentCounter(long commentId);
 
 }
