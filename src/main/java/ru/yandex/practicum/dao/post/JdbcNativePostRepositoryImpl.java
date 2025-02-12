@@ -101,8 +101,16 @@ public class JdbcNativePostRepositoryImpl implements PostRepository {
 
     @Override
     public boolean updatePost(Post post) {
-        String sql = "UPDATE posts SET title = ?, body = ?, short_body = ?, tags = ?, image = ? WHERE id = ?";
-        int rowsAffected = jdbcTemplate.update(sql, post.title(), post.body(), post.shortBody(), post.tags(), post.image(), post.id());
+
+        Integer rowsAffected = null;
+        if (post.image() != null) {
+            String sql = "UPDATE posts SET title = ?, body = ?, short_body = ?, tags = ?, image = ? WHERE id = ?";
+            rowsAffected = jdbcTemplate.update(sql, post.title(), post.body(), post.shortBody(), post.tags(), post.image(), post.id());
+        } else {
+            String sql = "UPDATE posts SET title = ?, body = ?, short_body = ?, tags = ? WHERE id = ?";
+            rowsAffected = jdbcTemplate.update(sql, post.title(), post.body(), post.shortBody(), post.tags(), post.id());
+        }
+
         return rowsAffected != 0;
     }
 

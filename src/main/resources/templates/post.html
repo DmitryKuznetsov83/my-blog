@@ -115,13 +115,8 @@
 
     <!-- picture. NEW + UPADTE -->
     <label>Choose picture:</label>
-    <input type="file" name="image" accept="image/*" id="image" onchange="previewImage(event)" />
-
-    <button type="button" onclick="clearImage()">Clear Image</button>
-
-    <div id="previewContainer" style="margin-top: 10px;">
-        <img id="imagePreview" th:src="@{/posts/{id}/image(id=${post.id})}" alt = "image" style="max-width: 100px; display: block;" />
-    </div>
+    <input type="file" name="image" accept="image/*" id="image"/>
+    <img id="imagePreview" th:src="@{/posts/{id}/image(id=${post.id})}" alt = "image" style="max-width: 100px; max-height: 100px; display: block;" />
 
     <br />
 
@@ -171,22 +166,6 @@
 
 <script>
     <![CDATA[
-    function clearImage() {
-        document.getElementById("image").value = "";
-        document.getElementById("imagePreview").src = "#";
-        document.getElementById("previewContainer").style.display = "none";
-    }
-
-    function previewImage(event) {
-        var reader = new FileReader();
-        reader.onload = function(){
-            var preview = document.getElementById('imagePreview');
-            preview.src = reader.result;
-            document.getElementById('previewContainer').style.display = 'block';
-        };
-        reader.readAsDataURL(event.target.files[0]);
-    }
-
     function editComment(td, commentId, postId) {
         if (td.querySelector("input")) return; // Предотвращает повторное создание input
 

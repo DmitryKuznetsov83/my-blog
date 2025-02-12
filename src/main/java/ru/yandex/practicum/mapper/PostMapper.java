@@ -1,5 +1,7 @@
 package ru.yandex.practicum.mapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +17,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class PostMapper {
+
+    private static final Logger log = LoggerFactory.getLogger(PostMapper.class);
 
     @Value("${myBlog.bodyPreviewNumberOfLines:3}")
     private Integer bodyPreviewNumberOfLines;
@@ -76,7 +80,7 @@ public class PostMapper {
         try {
             imageBytes = multipartFile.isEmpty() ? null : multipartFile.getBytes();
         } catch (IOException e) {
-            // todo: LOG
+            log.error("multipartFile reading error. " + e.getMessage());
         }
         return imageBytes;
     }
