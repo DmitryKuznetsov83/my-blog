@@ -1,4 +1,4 @@
-package ru.yandex.practicum.view_model.Tag;
+package ru.yandex.practicum.dto.Tag;
 
 public record TagDto(Long id,
                      String name) {}

@@ -6,10 +6,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.practicum.model.Post;
-import ru.yandex.practicum.view_model.Post.PostCreateDto;
-import ru.yandex.practicum.view_model.Post.PostFullViewDto;
-import ru.yandex.practicum.view_model.Post.PostPreviewDto;
-import ru.yandex.practicum.view_model.Post.PostUpdateDto;
+import ru.yandex.practicum.dto.Post.PostCreateDto;
+import ru.yandex.practicum.dto.Post.PostFullViewDto;
+import ru.yandex.practicum.dto.Post.PostPreviewDto;
+import ru.yandex.practicum.dto.Post.PostUpdateDto;
 
 import java.io.IOException;
 import java.util.List;

@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.dao.tag.TagRepository;
 import ru.yandex.practicum.mapper.TagMapper;
 import ru.yandex.practicum.model.Tag;
-import ru.yandex.practicum.view_model.Tag.TagDto;
+import ru.yandex.practicum.dto.Tag.TagDto;
 
 import java.util.*;
 

@@ -11,12 +11,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.service.comment.CommentService;
 import ru.yandex.practicum.service.post.PostService;
-import ru.yandex.practicum.view_model.Comment.CommentFullViewDto;
-import ru.yandex.practicum.view_model.Post.PostCreateDto;
-import ru.yandex.practicum.view_model.Post.PostFullViewDto;
-import ru.yandex.practicum.view_model.Post.PostPreviewDto;
-import ru.yandex.practicum.view_model.Post.PostUpdateDto;
-import ru.yandex.practicum.view_model.Tag.TagDto;
+import ru.yandex.practicum.dto.Comment.CommentFullViewDto;
+import ru.yandex.practicum.dto.Post.PostCreateDto;
+import ru.yandex.practicum.dto.Post.PostFullViewDto;
+import ru.yandex.practicum.dto.Post.PostPreviewDto;
+import ru.yandex.practicum.dto.Post.PostUpdateDto;
+import ru.yandex.practicum.dto.Tag.TagDto;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;

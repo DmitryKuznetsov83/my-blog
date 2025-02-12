@@ -11,7 +11,7 @@ import ru.yandex.practicum.configuration.service.PostServiceConfiguration;
 import ru.yandex.practicum.dao.post.PostRepository;
 import ru.yandex.practicum.model.Post;
 import ru.yandex.practicum.service.post.PostService;
-import ru.yandex.practicum.view_model.Post.PostFullViewDto;
+import ru.yandex.practicum.dto.Post.PostFullViewDto;
 
 import java.util.Optional;
 

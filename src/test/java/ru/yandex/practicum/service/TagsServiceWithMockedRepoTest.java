@@ -11,7 +11,7 @@ import ru.yandex.practicum.configuration.service.TagServiceConfiguration;
 import ru.yandex.practicum.dao.tag.TagRepository;
 import ru.yandex.practicum.model.Tag;
 import ru.yandex.practicum.service.tag.TagService;
-import ru.yandex.practicum.view_model.Tag.TagDto;
+import ru.yandex.practicum.dto.Tag.TagDto;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.view_model.Comment;
+package ru.yandex.practicum.dto.Comment;
 
 public record CommentCreateDto(Long postId,
                                String body) {}

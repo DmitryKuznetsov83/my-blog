@@ -1,10 +1,10 @@
 package ru.yandex.practicum.service.post;
 
-import ru.yandex.practicum.view_model.Post.PostCreateDto;
-import ru.yandex.practicum.view_model.Post.PostFullViewDto;
-import ru.yandex.practicum.view_model.Post.PostPreviewDto;
-import ru.yandex.practicum.view_model.Post.PostUpdateDto;
-import ru.yandex.practicum.view_model.Tag.TagDto;
+import ru.yandex.practicum.dto.Post.PostCreateDto;
+import ru.yandex.practicum.dto.Post.PostFullViewDto;
+import ru.yandex.practicum.dto.Post.PostPreviewDto;
+import ru.yandex.practicum.dto.Post.PostUpdateDto;
+import ru.yandex.practicum.dto.Tag.TagDto;
 
 import java.util.List;
 import java.util.Optional;

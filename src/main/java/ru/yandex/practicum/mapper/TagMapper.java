@@ -2,7 +2,7 @@ package ru.yandex.practicum.mapper;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.model.Tag;
-import ru.yandex.practicum.view_model.Tag.TagDto;
+import ru.yandex.practicum.dto.Tag.TagDto;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.view_model.Post;
+package ru.yandex.practicum.dto.Post;
 
 public record PostFullViewDto(Long id,
                               String title,

@@ -2,8 +2,8 @@ package ru.yandex.practicum.mapper;
 
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.model.Comment;
-import ru.yandex.practicum.view_model.Comment.CommentCreateDto;
-import ru.yandex.practicum.view_model.Comment.CommentFullViewDto;
+import ru.yandex.practicum.dto.Comment.CommentCreateDto;
+import ru.yandex.practicum.dto.Comment.CommentFullViewDto;
 
 import java.util.List;
 
