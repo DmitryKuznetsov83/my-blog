@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"> <!-- Добавляем неймспейс для thymeleaf-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>myBlog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .actions {
+            text-align: center;
+        }
+        .form-container {
+            margin-top: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input[type="text"], input[type="number"], input[type="checkbox"] {
+            width: 100%;
+            padding: 5px;
+            margin-top: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        .btn-add {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+<h1>myBlog - post feed</h1>
+
+<!--PAGING OPTIONS-->
+<form method="get" th:action="@{/posts}">
+    <label for="size">Show on page:</label>
+    <input type="hidden" name="page" th:value="1">
+    <input type="hidden" name="filterByTag" th:value="${currentTag}">
+    <select id="size" name="size" onchange="this.form.submit()">
+        <option th:each="s : ${pageSizes}" th:value="${s}" th:text="${s}" th:selected="${s == size}"></option>
+    </select>
+</form>
+
+<!--PAGING NAVIGATION-->
+<div>
+    <a th:href="${currentPage > 1} ? @{/posts(page=${currentPage - 1}, size=${size})} : '#'"
+       th:classappend="${currentPage == 1} ? 'disabled'">Prev</a>
+
+    <span th:text="'page ' + ${currentPage}"></span> of <span th:text="${totalPages}"></span>
+
+    <a th:href="${currentPage < totalPages} ? @{/posts(page=${currentPage + 1}, size=${size})} : '#'"
+       th:classappend="${currentPage == totalPages} ? 'disabled'">Next</a>
+</div>
+
+<br />
+
+
+<!--TAG FILTER-->
+<form method="get" th:action="@{/posts}">
+    <label for="filterByTag">Filter by tag:</label>
+    <input type="hidden" name="page" th:value="1">
+    <input type="hidden" name="size" th:value="${size}">
+    <select id="filterByTag" name="filterByTag" onchange="this.form.submit()">
+        <option value="">-- Select tag --</option>
+        <option th:each="t : ${tags}" th:value="${t}" th:text="${t}" th:selected="${t == currentTag}"}></option>
+    </select>
+</form>
+
+<br />
+
+<!--POST TABLE-->
+<a th:href="@{/posts/create}">Create new post</a>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Image</th>
+        <th>Title</th>
+        <th>Short body</th>
+        <th>Likes</th>
+        <th>Comments</th>
+        <th>Tags</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="post : ${posts}">
+        <td th:text="${post.id}"/>
+        <td>
+            <img th:if = "${post.hasImage == true}" th:src="@{/posts/{id}/image(id=${post.id})}" style="max-width: 100px; display: block;">
+        </td>
+        <td>
+            <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}"></a>
+        </td>
+        <td th:text="${post.shortBody}"/>
+        <td th:text="${post.likeCounter}"/>
+        <td th:text="${post.commentCounter}"/>
+        <td th:text="${post.tags}"/>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

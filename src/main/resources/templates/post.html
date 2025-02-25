@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"> <!-- Добавляем неймспейс для thymeleaf-->
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myBlog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .actions {
+            text-align: center;
+        }
+        .form-container {
+            margin-top: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input[type="text"], input[type="number"], input[type="checkbox"] {
+            width: 100%;
+            padding: 5px;
+            margin-top: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        img {
+            width: 300px;
+            height: 300px;
+            object-fit: cover;
+        }
+        .btn-add {
+            margin-bottom: 20px;
+        }
+        .editable {
+            width: 100%;
+            height: 100px;
+            border: 1px solid #ccc;
+            padding: 5px;
+        }
+    </style>
+</head>
+
+<body>
+<h1>myBlog - post</h1>
+
+<!--CLOSE BUTTON-->
+<form  th:action="@{/posts}" method="GET">
+    <button type="submit">Close</button>
+</form>
+
+<br />
+
+<!--DELETE BUTTON -->
+<form th:if="${mode == 'update'}" th:action="@{/posts/{id}(id=${post.id})}" method="POST" style="display:inline;">
+    <input type="hidden" name="_method" value="delete" />
+    <button type="submit">Delete</button>
+</form>
+
+<br />
+
+<!--LIKES-->
+<form th:if="${mode == 'update'}" th:action="@{/posts/{id}/like(id=${post.id})}" method="POST">
+    <button type="submit">Like</button>
+</form>
+<span id = "like_counter" th:if="${mode == 'update'}" th:text="'likes: ' + ${post.likeCounter}"></span>
+
+<br />
+
+<form th:action="@{/posts}" method="POST" enctype="multipart/form-data">
+
+    <!-- method. UPDATE ONLY-->
+    <input th:if="${mode == 'update'}" type="hidden" name="_method" value="update" />
+
+    <!-- save. NEW ONLY -->
+    <button th:if="${mode == 'new'}" type="submit">Save</button>
+
+    <!-- update. UPDATE ONLY -->
+    <button th:if="${mode == 'update'}" type="submit">Update</button>
+
+    <br />
+
+    <!-- id. UPDATE ONLY-->
+    <label th:if="${mode == 'update'}" for="id">id:</label>
+    <textarea th:if="${mode == 'update'}" th:text="${post.id}" id="id" name="id" rows="1" cols="10" readonly="true"></textarea>
+
+    <br />
+
+    <!-- title. NEW + UPADTE -->
+    <label for="title">title:</label>
+    <textarea th:text="${post.title}" id="title" name="title" rows="1" cols="100" placeholder="text..." required="true"></textarea>
+
+    <br />
+
+    <!-- picture. NEW + UPADTE -->
+    <label>Choose picture:</label>
+    <input type="file" name="image" accept="image/*" id="image"/>
+    <img id="imagePreview" th:src="@{/posts/{id}/image(id=${post.id})}" alt = "image" style="max-width: 100px; max-height: 100px; display: block;" />
+
+    <br />
+
+    <!-- body. NEW + UPADTE -->
+    <label for="body">body:</label>
+    <textarea th:text="${post.body}" id="body" name="body" rows="4" cols="100" placeholder="text..." required="true"></textarea>
+
+    <br />
+
+    <!-- tags. NEW + UPADTE -->
+    <label for="tags">tags:</label>
+    <textarea th:text="${post.tags}" id="tags" name="tags" rows="1" cols="100" placeholder="tags..."></textarea>
+</form>
+
+<br />
+
+<!--COMMENTS-->
+<label th:if="${mode == 'update'}" for="comments">comments:</label>
+
+<form th:if="${mode == 'update'}" th:action="@{/posts/{postId}/comments(postId=${post.id})}" method="POST" enctype="multipart/form-data">
+    <textarea id="newComment" name="body" rows="1" cols="100" placeholder="text..." required="true"></textarea>
+    <button type="submit">Add comment</button>
+</form>
+
+<table  th:if="${mode == 'update'}" id="comments">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Comment</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="comment : ${comments}">
+        <td th:text="${comment.id}"/>
+        <td th:id="'comment-' + ${comment.id}" th:text="${comment.body}" th:ondblclick="editComment(this, [[${comment.id}]], [[${comment.postId}]])"></td>
+        <td>
+            <form th:action="@{/posts/{postId}/comments/{commentId}(postId=${post.id}, commentId=${comment.id})}"
+                  method="POST" style="display:inline;">
+                <input type="hidden" name="_method" value="delete" />
+                <button type="submit">Delete comment</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<script>
+    <![CDATA[
+    function editComment(td, commentId, postId) {
+        if (td.querySelector("input")) return; // Предотвращает повторное создание input
+
+        let currentText = td.innerText;
+        let input = document.createElement("input");
+        input.type = "text";
+        input.value = currentText;
+        input.classList.add("comment-input");
+
+        input.addEventListener("keydown", function(event) {
+            if (event.ctrlKey && event.key === "Enter") {
+                saveComment(td, commentId, postId, input.value);
+                document.removeEventListener("click", outsideClickHandler);
+            }
+        });
+
+        function outsideClickHandler(event) {
+            if (!td.contains(event.target)) {
+                td.innerText = currentText;
+                document.removeEventListener("click", outsideClickHandler);
+            }
+        }
+
+        document.addEventListener("click", outsideClickHandler);
+
+        td.innerHTML = "";
+        td.appendChild(input);
+        input.focus();
+    }
+
+    function saveComment(td, commentId, postId, newText) {
+        td.innerText = newText || "(empty)";
+
+        fetch(/myblog/posts/${postId}/comments/${commentId}?_method=update&body=${newText}, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+
+    }
+    ]]>
+</script>
+
+</body>
+
+</html>
