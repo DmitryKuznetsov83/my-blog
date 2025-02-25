@@ -2,16 +2,18 @@ package ru.yandex.practicum.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
+import org.mockito.Spy;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ru.yandex.practicum.configuration.service.PostServiceConfiguration;
 import ru.yandex.practicum.dao.post.PostRepository;
-import ru.yandex.practicum.model.Post;
-import ru.yandex.practicum.service.post.PostService;
 import ru.yandex.practicum.dto.Post.PostFullViewDto;
+import ru.yandex.practicum.mapper.PostMapper;
+import ru.yandex.practicum.model.Post;
+import ru.yandex.practicum.service.comment.CommentService;
+import ru.yandex.practicum.service.post.PostServiceImp;
+import ru.yandex.practicum.service.tag.TagService;
 
 import java.util.Optional;
 
@@ -19,15 +21,23 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = PostServiceConfiguration.class)
-@ActiveProfiles("mock_repo")
 public class PostServiceWithMockedRepoTest {
 
-    @Autowired
-    private PostService postService;
+    @InjectMocks
+    private PostServiceImp postService;
 
-    @Autowired
+    @Mock
     private PostRepository postRepository;
+
+    @Mock
+    TagService tagService;
+
+    @Mock
+    CommentService commentService;
+
+    @Spy
+    PostMapper postMapper = new PostMapper();
+
 
     @Test
     public void findPostById_shouldReturnPost() {

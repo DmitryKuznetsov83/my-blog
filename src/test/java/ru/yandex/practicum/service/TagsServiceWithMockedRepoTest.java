@@ -2,16 +2,16 @@ package ru.yandex.practicum.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
+import org.mockito.Spy;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ru.yandex.practicum.configuration.service.TagServiceConfiguration;
 import ru.yandex.practicum.dao.tag.TagRepository;
-import ru.yandex.practicum.model.Tag;
-import ru.yandex.practicum.service.tag.TagService;
 import ru.yandex.practicum.dto.Tag.TagDto;
+import ru.yandex.practicum.mapper.TagMapper;
+import ru.yandex.practicum.model.Tag;
+import ru.yandex.practicum.service.tag.TagServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,15 +21,16 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TagServiceConfiguration.class)
-@ActiveProfiles("mock_repo")
 public class TagsServiceWithMockedRepoTest {
 
-    @Autowired
-    private TagService tagService;
+    @InjectMocks
+    private TagServiceImpl tagService;
 
-    @Autowired
+    @Mock
     private TagRepository tagRepository;
+
+    @Spy
+    private TagMapper tagMapper = new TagMapper();
 
     @Test
     public void findAllTags_shouldAllTags() {

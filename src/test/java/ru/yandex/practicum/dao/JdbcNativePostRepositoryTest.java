@@ -3,12 +3,12 @@ package ru.yandex.practicum.dao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import ru.yandex.practicum.configuration.DataSourceTestConfiguration;
+import org.springframework.test.context.ActiveProfiles;
 import ru.yandex.practicum.dao.post.JdbcNativePostRepositoryImpl;
-import ru.yandex.practicum.dao.post.PostRepository;
 import ru.yandex.practicum.model.Post;
 import ru.yandex.practicum.utils.DbUtils;
 
@@ -18,15 +18,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-@SpringJUnitConfig(classes = {DataSourceTestConfiguration.class, JdbcNativePostRepositoryImpl.class})
-@TestPropertySource(locations = "classpath:test-application.properties")
+@DataJpaTest
+@ActiveProfiles("test")
+@Import(JdbcNativePostRepositoryImpl.class)
 public class JdbcNativePostRepositoryTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private PostRepository postRepository;
+    private JdbcNativePostRepositoryImpl postRepository;
 
     @BeforeEach
     void setUp() {

@@ -1,5 +1,6 @@
 package ru.yandex.practicum.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
@@ -18,8 +19,6 @@ import ru.yandex.practicum.dto.Post.PostPreviewDto;
 import ru.yandex.practicum.dto.Post.PostUpdateDto;
 import ru.yandex.practicum.dto.Tag.TagDto;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -28,7 +27,6 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/posts")
-@Validated
 public class PostController {
 
     private final PostService postService;
@@ -47,8 +45,8 @@ public class PostController {
     // POSTS
     @GetMapping
     public String getPosts(Model model,
-                           @RequestParam(name = "page", defaultValue = "1") @Positive Integer page,
-                           @RequestParam(name = "size", defaultValue = "10") @Positive Integer size,
+                           @RequestParam(name = "page", defaultValue = "1") Integer page,
+                           @RequestParam(name = "size", defaultValue = "10") Integer size,
                            @RequestParam(name = "filterByTag", required = false) String filterByTag) {
 
         List<PostPreviewDto> posts = postService.findPostsByPage(page, size, filterByTag);
@@ -73,7 +71,7 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public String getPost(Model model, @PathVariable(name = "id") long id) {
+    public String getPost(HttpServletResponse response, Model model, @PathVariable(name = "id") long id) {
         Optional<PostFullViewDto> maybePost = postService.findPostById(id);
         if (maybePost.isPresent()) {
             List<CommentFullViewDto> comments = commentService.getCommentsByPostId(id);
@@ -82,24 +80,35 @@ public class PostController {
             model.addAttribute("comments", comments);
             return "post";
         } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return "status_404";
         }
     }
 
     @PostMapping
-    public String createPost(@ModelAttribute @Valid PostCreateDto post) {
+    public String createPost(@ModelAttribute PostCreateDto post) {
         long postId = postService.createPost(post);
         return "redirect:/posts/" + postId;
     }
 
     @PostMapping(params = "_method=update")
-    public String updatePost(@ModelAttribute PostUpdateDto post) {
-        return (postService.updatePost(post) ? "redirect:/posts/" + post.id() :  "status_404");
+    public String updatePost(HttpServletResponse response, @ModelAttribute PostUpdateDto post) {
+        if (postService.updatePost(post)) {
+            return "redirect:/posts/" + post.id();
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return "status_404";
+        }
     }
 
     @PostMapping(value = "/{id}", params = "_method=delete")
-    public String deletePost(@PathVariable(name = "id") long id) {
-        return (postService.deletePostById(id) ? "redirect:/posts" : "status_404");
+    public String deletePost(HttpServletResponse response, @PathVariable(name = "id") long id) {
+        if (postService.deletePostById(id)) {
+            return "redirect:/posts";
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return "status_404";
+        }
     }
 
 

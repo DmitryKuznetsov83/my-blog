@@ -47,7 +47,7 @@ public class PostServiceImp implements PostService{
     @Transactional(readOnly = true)
     public Optional<PostFullViewDto> findPostById(long id) {
         return postRepository.findPostById(id).map(postMapper::mapToPostFullDto);
-    }
+}
 
     @Override
     @Transactional
