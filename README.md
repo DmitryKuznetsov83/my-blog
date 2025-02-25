@@ -1,22 +1,21 @@
 # My Blog
 
 ### Как собирать приложение
-- Используем maven wrapper
-- Стандартно clean install
+- Используем gradle wrapper
 
 ### Как запускать тесты
 Есть следующие тесты
-  - Тесты сервисов с замокаными репозиториями.  
-    - **Особенности**: профиль "mock_repo" активирует мок вариант для репозиориев
+- Тесты сервисов с замокаными репозиториями.
     - **Где**: ru.yandex.practicum.service
-  - Тесты контроллеров
+- Тесты контроллеров
     - Основано на MockMvc
     - Проверяем возвращаемые HTML странички
-  - Тесты репозиториев
+- Тесты репозиториев
 
-### Как деплоить приложение в сервлет-контейнер
-  - Вариант 1 "Простой деплой без отладки". Maven сlean package. Копируем target/my-blog.war в папку Tomcat /webapps
-  - Вариант 2 "Отладка в IDEA". Если есть intellij idea ultimate edition можно создать run/debug configuration для Tomcat
+### Приложение запускает через как стандартное Spring Boot приложение
+- класс для запуска MyBlogSpringBootApplication
+- используется embedded контейнер сервлетов Tomcat
 
-### Как запускать приложение
-  - открываем в браузере http://localhost:8080/myblog/posts
+### Как запускать приложение[MyBlogSpringBootApplication.java](src/main/java/ru/yandex/practicum/MyBlogSpringBootApplication.java)
+- открываем в браузере http://localhost:8080/myblog/posts
+
